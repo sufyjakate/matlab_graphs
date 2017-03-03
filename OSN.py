@@ -1,7 +1,9 @@
 import sqlite3, random
 import matplotlib.pyplot as plt
+import numpy as np
 import re
-
+plt.rcdefaults()
+fig, ax = plt.subplots()
 
 def main():
     #x = {'UDP': 0, 'TCP': 0}
@@ -17,22 +19,27 @@ def plott(c):
     # plotting the data
     c.execute('''select count(country) from prof_scherp group by country having (count(country)>0)''')
     tcpvalues = c.fetchall()
-    print tcpvalues
+    print type(tcpvalues)
+
+    c.execute("select country from prof_scherp")
+    country = c.fetchall()
+    print country
 
     c.execute("select count(ID) from prof_scherp ")
     udpvalues = c.fetchall()
+    udpvalues = np.array(udpvalues)
     print udpvalues
 
-    plt.plot(tcpvalues, label="Countries", color="blue", alpha=0.7)
-    #plt.plot(udpvalues, label="Numbers of Users", color="blue", alpha=0.3)
-    plt.ylabel("number of users")
-    plt.xlabel("countries")
-    plt.autoscale(enable=True, axis='both', tight=None)
-    legend = plt.legend(loc='upper right', shadow=True, fontsize='x-large')
-    legend.get_frame().set_facecolor('white')
-    plt.show()
-    print "Done with plot"
+    y_pos = np.arange(len(country))
 
+    ax.barh(y_pos, 3000 , align='center', color='green', ecolor='black')
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(country)
+    ax.invert_yaxis()  # labels read top-to-bottom
+    ax.set_xlabel('number of people')
+    ax.set_title('Demographic Analysis - Country Wise')
+
+    plt.show()
 
 if __name__ == '__main__':
     main()
